@@ -1,15 +1,17 @@
 import "./style/Header.css";
 import 'material-icons/iconfont/material-icons.css';
-
+import NewSubject from "./NewSubject";
 import config from '../config/workspaces.json'
 import { atom, useAtom } from 'jotai'
 
 const fullscreenAtom = atom(false);
 const workspacesAtom = atom(config.workspaces);
+const isOpenAtom = atom(false);
 
 const Header = () => {
   const [getFullscreen, setFullScreen] = useAtom(fullscreenAtom);
   const [getWorkspaces, setWorkspaces] = useAtom(workspacesAtom);
+  const [isOpen, setIsOpen] = useAtom(isOpenAtom);
 
   const minimizeWindow = window.electronAPI.minimizeWindow;
   const closeWindow = window.electronAPI.closeWindow;
@@ -22,6 +24,10 @@ const Header = () => {
     setFullScreen(data);
   });
 
+  function NewSubjectToggle() {
+    setIsOpen(!isOpen);
+  }
+
   return <header>
     <div class="movable">
       <h1><b>CPNE</b><span>/</span><i>Workspaces</i></h1>
@@ -32,7 +38,10 @@ const Header = () => {
           return <button id={`workspace-${el.name}`} style={{ color: el.color, backgroundColor: el.background }}>{el.name}</button>
         })}
       </div>
-      <button><span class="material-icons">add</span></button>
+      <button onClick={NewSubjectToggle()}><span class="material-icons">add</span></button>
+    </div>
+    <div className="addSubject">
+        {isOpen && <NewSubject/>}
     </div>
     <div id="controlButtons">
       <button data-electron-control="control-minimize" onClick={minimizeWindow}>
